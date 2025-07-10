@@ -4,6 +4,8 @@ import { cn, configureAssistant, getSubjectColor } from '@/lib/utils';
 import { vapi } from '@/lib/vapi.sdk';
 import Lottie, { LottieRefCurrentProps } from 'lottie-react';
 import soundwaves from '@/constants/soundwaves.json';
+import { addToSessionHisory } from '@/lib/actions/companion.actions';
+
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -28,7 +30,7 @@ const CompanionComponent = ({
 	const [isSpeaking, setIsSpeaking] = useState(false);
 	const [isMuted, setIsMuted] = useState(false);
 
-	const [messages, setMessages] = useState<savedMessage[]>([]);
+	const [messages, setMessages] = useState<SavedMessage[]>([]);
 
 	const lottieRef = useRef<LottieRefCurrentProps>(null);
 
@@ -45,7 +47,10 @@ const CompanionComponent = ({
 	useEffect(() => {
 		const onCallStart = () => setCallStatus(CallStatus.ACTIVE);
 
-		const onCallEnd = () => setCallStatus(CallStatus.FINISHED);
+		const onCallEnd = () => {
+			setCallStatus(CallStatus.FINISHED);
+			addToSessionHisory(companionId);
+		};
 
 		const onMessage = (message: Message) => {
 			if (message.type === 'transcript' && message.transcriptType === 'final') {
