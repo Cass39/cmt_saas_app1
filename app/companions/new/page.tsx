@@ -1,11 +1,13 @@
 import CompanionForm from '@/components/CompanionForm';
 import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
-//import React from 'react';
+//import {newCompanionPermissions} from "@/lib/actions/companion.actions";
 
 const NewCompanion = async () => {
 	const { userId } = await auth();
 	if (!userId) redirect('/sign-in');
+
+	//const canCreateCompanion = await newCompanionPermissions()
 
 	return (
 		<main className='min-lg:w-1/3 min-md:2/3 items-center justify-center'>

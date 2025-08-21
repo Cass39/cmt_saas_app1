@@ -2,7 +2,7 @@
 import {
 	Table,
 	TableBody,
-	TableCaption,
+	//TableCaption,
 	TableCell,
 	TableHead,
 	TableHeader,
@@ -33,7 +33,7 @@ const CompanionsList = ({
 }: CompanionsListProps) => {
 	return (
 		<article className={cn('companion-list', classNames)}>
-			<h2 className='font-bold text-3xl text-black'>Recent Sessions</h2>
+			<h2 className='font-bold text-3xl text-black'>{title}</h2>
 			<Table>
 				<TableHeader>
 					<TableRow>
