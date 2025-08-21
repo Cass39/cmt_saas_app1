@@ -27,12 +27,11 @@ export const getAllCompanions = async ({
 }: GetAllCompanions) => {
 	const supabase = createSupabaseClient();
 
-	let query = supabase.from('companions').select();
+	let query = supabase.from('companions').select('*');
 
 	if (subject && topic) {
 		query = query
 			.ilike('subject', `%${subject}%`)
-
 			.or(`topic.ilike.%${topic}%,name.ilike.%${topic}%`);
 	} else if (subject) {
 		query = query.ilike('subject', `%${subject}%`);
@@ -44,9 +43,11 @@ export const getAllCompanions = async ({
 
 	const { data: companions, error } = await query;
 
-	if (error) throw new Error(error.message);
-
-	return companions;
+	if (error) {
+		console.error('getAllCompanions error:', error);
+		return []; // render an empty list instead of 500
+	}
+	return companions ?? [];
 };
 
 export const getCompanion = async (id: string) => {
@@ -54,12 +55,14 @@ export const getCompanion = async (id: string) => {
 
 	const { data, error } = await supabase
 		.from('companions')
-		.select()
+		.select('*')
 		.eq('id', id);
 
-	if (error) return console.log(error);
-
-	return data[0];
+	if (error) {
+		console.error('getCompanion error:', error);
+		return null;
+	}
+	return data?.[0] ?? null;
 };
 
 export const addToSessionHistory = async (companionId: string) => {
@@ -76,8 +79,8 @@ export const addToSessionHistory = async (companionId: string) => {
 };
 
 export const getRecentSessions = async (limit = 10) => {
-	const supbase = createSupabaseClient();
-	const { data, error } = await supbase
+	const supabase = createSupabaseClient();
+	const { data, error } = await supabase
 		.from('session_history')
 		.select(`companions:companion_id (*)`)
 		.order('created_at', { ascending: false })
@@ -106,7 +109,7 @@ export const getUserCompanions = async (userId: string) => {
 	const supabase = createSupabaseClient();
 	const { data, error } = await supabase
 		.from('companions')
-		.select()
+		.select('*')
 		.eq('author', userId);
 
 	if (error) throw new Error(error.message);
